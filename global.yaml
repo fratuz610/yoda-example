@@ -1,0 +1,6 @@
+phoneHome:
+  from: test@yoda.com
+  to: D-1l2mhwm@maildrop.cc
+  service: mailgun
+  user: postmaster@yoda.com
+  pass: 3kh9umujora5
