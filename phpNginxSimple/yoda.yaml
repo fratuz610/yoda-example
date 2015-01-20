@@ -77,8 +77,15 @@ taskList:
       source: /etc/nginx/sites-available/test.example.com
       dest: /etc/nginx/sites-enabled/test.example.com
 
+  # we setup the timezone properly
+  - file:
+      path: /etc/timezone
+      content: Australia/Sydney
+  - script:
+      cmd: "dpkg-reconfigure -f noninteractive tzdata"
+
+  # let's restart nginx and php5-fpm
   - script:
       cmd: "service php5-fpm restart"
-
   - script:
       cmd: "service nginx restart"
