@@ -1,0 +1,103 @@
+# php nginx configuration
+taskList:
+  - apt_package:
+      packageList: [mysql-server, php5-cli, php5-json, php5-mysqlnd, php5-fpm, php5-cgi, php5-gd, php5-curl, php5-mcrypt, php5, unzip, p7zip-full, nginx, git]
+
+  - directory:
+      path: /var/www
+
+  - user:
+      username: adminer
+      group: adminer
+      home: /var/www/adminer
+      shell: /bin/bash
+
+  - directory:
+      path: /var/www/adminer/web
+      user: adminer
+      group: adminer
+
+  - remote_file:
+      source: http://downloads.sourceforge.net/adminer/adminer-4.2.0-en.php
+      path: /var/www/adminer/web/adminer-4.2.0-en.php
+      user: adminer
+      group: adminer
+
+  - remote_file:
+      source: https://raw.github.com/vrana/adminer/master/designs/ng9/adminer.css
+      path: /var/www/adminer/web/adminer.css
+      user: adminer
+      group: adminer
+
+  - template:
+      path: /var/www/adminer/web/index.php
+      source: templates/index.php.mustache
+
+  - directory:
+      path: /var/www/adminer/log
+      user: adminer
+      group: adminer
+
+
+  # PhpFpm Config
+  - file:
+      action: remove
+      path: /etc/php5/fpm/pool.d/www.conf
+
+  - template:
+      path: /etc/php5/fpm/pool.d/adminer.conf
+      source: templates/php-fpm.mustache
+      variables: 
+        poolName: adminer
+        maxChildren: 5
+        port: 9000
+        user: adminer
+        group: adminer
+        errorLog: /var/www/adminer/log/php_error.log
+        phpAdminValues: 
+          - key: post_max_size
+            value: 128M
+          - key: upload_max_filesize
+            value: 128M
+          - key: expose_php
+            value: 0
+
+  # Nginx Config
+
+  - file:
+      action: remove
+      path: /etc/nginx/sites-available/default
+
+  - file:
+      action: remove
+      path: /etc/nginx/sites-enabled/default
+
+  - template:
+      path: /etc/nginx/nginx.conf
+      source: templates/nginx.conf.mustache
+
+  - template:
+      path: /etc/nginx/sites-available/adminer
+      source: templates/simple-php-site.mustache
+      variables:
+        siteName: adminer
+        serverNames:
+          - adminer
+        port: 9000
+
+  - symlink:
+      source: /etc/nginx/sites-available/adminer
+      dest: /etc/nginx/sites-enabled/adminer
+
+  # we setup the timezone properly
+  - file:
+      path: /etc/timezone
+      content: Australia/Sydney
+  - script:
+      cmd: "dpkg-reconfigure -f noninteractive tzdata"
+
+  # let's restart nginx and php5-fpm
+  - script:
+      cmd: "service php5-fpm restart"
+  - script:
+      cmd: "service nginx restart"

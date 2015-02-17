@@ -1,0 +1,6 @@
+// create an ELB
+- min max units
+- scaleup scaledonw policy
+
+// setup an AMI
+// -> pass yoda configuration

@@ -1,0 +1,25 @@
+<?php
+
+function adminer_object() {
+    // required to run any plugin
+    include_once "./plugins/plugin.php";
+    
+    // autoloader
+    foreach (glob("plugins/*.php") as $filename) {
+        include_once "./$filename";
+    }
+    
+	$serverList = array();
+	$serverList[] = "127.0.0.1";
+	
+    $plugins = array(
+        // specify enabled plugins here
+        new AdminerLoginServers($serverList)
+    );
+    
+    return new AdminerPlugin($plugins);
+}
+
+// include original Adminer or Adminer Editor
+include "./adminer-4.2.0-en.php";
+?>
