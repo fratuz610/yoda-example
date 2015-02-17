@@ -1,5 +1,12 @@
 # php nginx configuration
 taskList:
+
+  # we autosetup the mysql root password as dontask
+  - script:
+      cmd: 'echo "mysql-server mysql-server/root_password password dontask" | sudo debconf-set-selections'
+  - script:
+      cmd: 'echo "mysql-server mysql-server/root_password_again password dontask" | sudo debconf-set-selections'
+
   - apt_package:
       packageList: [mysql-server, php5-cli, php5-json, php5-mysqlnd, php5-fpm, php5-cgi, php5-gd, php5-curl, php5-mcrypt, php5, unzip, p7zip-full, nginx, git]
 
