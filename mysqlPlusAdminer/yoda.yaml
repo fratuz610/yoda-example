@@ -27,24 +27,30 @@ taskList:
   - remote_file:
       source: http://downloads.sourceforge.net/adminer/adminer-4.2.0-en.php
       path: /var/www/adminer/web/adminer-4.2.0-en.php
-      user: adminer
-      group: adminer
 
   - remote_file:
       source: https://raw.github.com/vrana/adminer/master/designs/ng9/adminer.css
       path: /var/www/adminer/web/adminer.css
-      user: adminer
-      group: adminer
 
   - template:
       path: /var/www/adminer/web/index.php
       source: templates/index.php.mustache
 
   - directory:
+      path: /var/www/adminer/web/plugins
+
+  - remote_file:
+      source: https://raw.github.com/vrana/adminer/master/plugins/plugin.php
+      path: /var/www/adminer/web/plugins/plugin.php
+
+  - remote_file:
+      source: https://raw.github.com/vrana/adminer/master/plugins/login-servers.php
+      path: /var/www/adminer/web/plugins/login-servers.php
+
+  - directory:
       path: /var/www/adminer/log
       user: adminer
       group: adminer
-
 
   # PhpFpm Config
   - file:
@@ -70,7 +76,6 @@ taskList:
             value: 0
 
   # Nginx Config
-
   - file:
       action: remove
       path: /etc/nginx/sites-available/default
